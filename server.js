@@ -9,38 +9,29 @@ dotenv.config();
 // Initialize express
 const app = express();
 
-// Connect to MongoDB with error handling
-const startServer = async () => {
-    try {
-        await connectDB();
-        console.log('MongoDB Connected...');
-    } catch (err) {
-        console.error('MongoDB connection error:', err.message);
-    }
-};
-
-startServer();
-
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error('Error:', err.message);
-    res.status(500).json({ 
-        message: 'Server error',
-        error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
-    });
+// Connect to MongoDB without blocking server start
+connectDB().catch(console.error);
+
+// Basic route
+app.get('/', (req, res) => {
+    res.json({ message: 'API is running' });
 });
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/credits', require('./routes/credits'));
 
-// Basic route
-app.get('/', (req, res) => {
-    res.json({ message: 'API is running' });
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ 
+        message: 'Server error',
+        error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+    });
 });
 
 // Start server
@@ -49,5 +40,4 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-// For Vercel
 module.exports = app;
