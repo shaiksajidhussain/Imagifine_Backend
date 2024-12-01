@@ -16,9 +16,9 @@ router.post('/create-order', auth, async (req, res) => {
     
     // Define plans and their prices in paise (1 INR = 100 paise)
     const plans = {
-      basic: { amount: 1000, credits: 100 },     // ₹10 for 100 credits
-      advanced: { amount: 5000, credits: 500 },   // ₹50 for 500 credits
-      business: { amount: 25000, credits: 2000 }  // ₹250 for 2000 credits
+      basic: { amount: 10, credits: 5 },      // ₹10 for 5 credits
+      advanced: { amount: 50, credits: 20 },   // ₹50 for 20 credits
+      business: { amount: 100, credits: 40 }   // ₹100 for 40 credits
     };
 
     const plan = plans[planId];
