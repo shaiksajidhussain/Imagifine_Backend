@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     },
     credits: {
         type: Number,
-        default: 4
+        default: 5
     },
     isVerified: {
         type: Boolean,  
