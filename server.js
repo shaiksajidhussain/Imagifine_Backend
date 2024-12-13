@@ -2,12 +2,22 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const rateLimit = require('express-rate-limit');
 
 // Load environment variables
 dotenv.config();
 
 // Initialize express
 const app = express();
+
+// Add rate limiter configuration here
+const paymentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // limit each IP to 10 requests per window
+  message: {
+    error: 'Too many payment attempts. Please try again later.'
+  }
+});
 
 // Middleware
 app.use(cors({
@@ -24,6 +34,10 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
+
+// Apply rate limiter to payment routes
+app.use('/api/credits/create-order', paymentLimiter);
+app.use('/api/credits/verify-payment', paymentLimiter);
 
 // Connect to MongoDB without blocking server start
 connectDB().catch(console.error);
